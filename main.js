@@ -2,7 +2,6 @@ const { app, BrowserWindow } = require('electron')
 const path = require('path');
 const url = require('url');
 
-const { getBusMsg } = require('./native/receive');
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -19,6 +18,7 @@ function createWindow () {
 		transparent: true,
 		frame: false,
 		// hasShadow: false,
+		webPreferences: {webSecurity: false},
 	})
 
 	// and load the index.html of the app.
@@ -43,7 +43,6 @@ function createWindow () {
 		// when you should delete the corresponding element.
 		win = null
 	})
-	getBusMsg(win);
 	win.webContents.on('did-finish-load', function() {
 		win.webContents.send('ping', 'whoooooooh!');
 	});

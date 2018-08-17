@@ -1,20 +1,12 @@
 
 
 import React from 'react';
-const { ipcRenderer } = window.require('electron');
 
 class Header extends React.Component {
     state = {
-        message: ''
+        message: '车来了电脑版'
     }
     componentDidMount() {
-        // ipcRenderer.send('getMsg', '请求')
-        ipcRenderer.on('ping', (event, message) => {
-            console.log(message)
-            this.setState({
-                message
-            })
-        })
     }
     render() {
         const { message } = this.state;
