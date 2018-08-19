@@ -1,11 +1,15 @@
 import React from 'react';
 import axios from 'axios';
 
+import { Button, Snackbar } from '@material-ui/core';
+
+// import css from './index.scss';
+
 class Home extends React.Component {
     constructor() {
         super()
         this.state = {
-            data: '',
+            open: false,
             cityId: '003',
             lineNo: '',
             lineId: '',
@@ -14,6 +18,7 @@ class Home extends React.Component {
         }
         this.stationClick = this.stationClick.bind(this);
         this.search = this.search.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     stationClick(order) {
@@ -22,27 +27,44 @@ class Home extends React.Component {
         const url = `http://223.6.254.105/bus/line!lineDetail.action?lineName=${lineNo}&lineNo=${lineNo}&cityId=${cityId}&sign=signkey11&s=IOS&stats_referer=searchHistory&v=5.34.0${order ? '&targetOrder=' + order : ''}${lineId ? '&lineId=' + lineId : ''}`;
         axios.get(url).then(res => {
             const data = res.data.slice(6, -6);
-            console.log(JSON.parse(data).jsonr.data);
             const { buses } = JSON.parse(data).jsonr.data;
-            this.setState({ buses })
+            this.setState({ buses: buses.reverse() })
         });
     }
 
     search() {
         const { lineNo, lineId, cityId } = this.state;
+        if (!lineNo) {
+            return this.setState({
+                open: true
+            })
+        }
+
         const url = `http://223.6.254.105/bus/line!lineDetail.action?lineName=${lineNo}&lineNo=${lineNo}&cityId=${cityId}&sign=signkey11&s=IOS&stats_referer=searchHistory&v=5.34.0${lineId ? '&lineId=' + lineId : ''}`;
         axios.get(url).then(res => {
             const data = res.data.slice(6, -6);
             const { stations, line } = JSON.parse(data).jsonr.data;
+            console.log(stations)
+
             this.setState({ stations, lineId: line.lineId })
         });
     }
+    handleClose() {
+        return this.setState({
+            open: false,
+        })
+    }
 
     render() {
-        const { data, stations, buses, order } = this.state;
+        const { stations, buses, order, open } = this.state;
         return (
             <div>
-                重庆：<input type="text" onBlur={(e) => this.setState({ lineNo: e.target.value })}/> <button onClick={() => this.search()}>搜索</button>
+                重庆：<input type="text" onChange={(e) => this.setState({ lineNo: e.target.value })} />
+                <Button
+                    color="primary"
+                    onClick={() => this.search()}
+                >搜索
+                </Button>
 
                 {
                     stations.map((item, index) => 
@@ -58,6 +80,15 @@ class Home extends React.Component {
                         : null
                     ))
                 }
+                <Snackbar
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    open={open}
+                    onClose={this.handleClose}
+                    ContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span>I love snacks</span>}
+                />
 
             </div>
         )
