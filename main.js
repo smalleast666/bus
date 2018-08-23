@@ -11,30 +11,28 @@ let win
 function createWindow () {
 	// Create the browser window.
 	win = new BrowserWindow({
-		width: 800,
+		width: 900,
 		height: 600,
-		'minWidth': 375,
-		'minHeight': 175,
 		transparent: true,
-		frame: false,
-		// hasShadow: false,
+		// frame: false,
+		hasShadow: false,
 		webPreferences: {webSecurity: false},
 	})
-
 	// and load the index.html of the app.
   
-	if (process.env.NODE_ENV === 'production') {
+	// if (process.env.NODE_ENV === 'production') {
 		win.loadURL(url.format({
 			pathname: path.join(__dirname, './build/index.html'),
 			protocol: 'file:',
 			slashes: true
 		}))
-	} else {
-		win.loadURL('http://localhost:3000/')
-	}
+	// } else {
+	// 	win.loadURL('http://localhost:3000/')
+	// }
 	
+
 	// Open the DevTools.
-	win.webContents.openDevTools()
+	// win.webContents.openDevTools()
 
 	// Emitted when the window is closed.
 	win.on('closed', () => {
